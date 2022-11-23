@@ -14,39 +14,6 @@
 % RIFins: Rain Impulse Function, for IRR
 % RIF49: Rain Impulse Function vector
 % Kz parametrization using kz_function_v2
-%
-% 09/03/2021 - test1
-% t_difWs with diff <=0 and t_dif <=0
-% 09/10/2021 - test2
-% just taking the closest difference
-% test 3 - same as AQ
-% t_difWs with diff <0 and t_dif <0
-%
-% 09/24/2021 - update - test 4
-% change code to use all available IMERG latitudes, since it was being
-% constrained to +-60, like CMORPH
-% 
-% 09/24/2021 - update - test 5
-% as like test 4, but using t_dif and t_difWS from test1
-% t_difWs with diff <=0 and t_dif <=0
-%
-% 12/09/2021 - update
-% as like test 5, but using Argo instead of HYCOM
-%
-% 12/15/2021 - update
-% as previous update, but using argo(aa,bb) instead of footprint average
-%
-% 01/28/2022 - update - test 6
-% as test5 but commenting likes 323-330 to not skip data
-%
-% 06/22/2022 - test 10 (between 6 and 9 we were testing 10 km res)
-% as test 6, but with RR = 2*IMERG
-%
-% 07/01/2022 - update - test 11
-% as test 6, but with RR = 1/2*IMERG
-%
-% 07/15/2022 - update - test 12
-% as test 6, but with hycom, instead of argo
 
 
 function Run_PRIM_SMAP_JPLv5_IMERGv6_Rev12_h5
