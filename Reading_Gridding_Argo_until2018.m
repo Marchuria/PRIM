@@ -1,35 +1,35 @@
-% This code reads the  gridded Argo data, extracts the surface salinity, 
-% changes the lat/lon grid to match the other PRIM inputs
-% and saves it in Matlab format
-% 
-% Data source is 2004-2018 RG Argo Salinity Climatology - RG_ArgoClim_Salinity_2019.nc
-% 
-%
-%
-% inputs: 
-%    inDir = location of the Argo netcdf files downloaded from https://sio-argo.ucsd.edu/RG_Climatology.html
-%    outDir = folder to store .mat files in
-%
-% Developed by March Jacob 
-%
-%
-%
-%
-% processing steps include:
-% -  changing lon to 0-360 (originally is 20-380)
-% - fliping lat to match other PRIM inputs (in PRIM the first index in lat is 90N, and the
-% last index is 90S. In Argo, originally, first index is 65S and last index is 80N)
-% 
+% This code reads the Argo Scripp files, grids and saves in Matlab format
+% developed by March Jacob, Rev1: 11/16/2021
+% The function takes as input 2004-2018 RG Argo Salinity Climatology
+% update: 12/15/2021
+% changing lon to 0-360 (originally is 20-380)
+% and lat is flipped to match rim data (in RIM the index 1 is 90, and the
+% 720 is -90. In Argo, originally, index 1 is -65 and 720 is 80)
+% update: 12/20/2021
+% making lat goes to -90 to 90, instead of original -65 to 80
+% update: 03/12/2022
+% to run on server or pc
+% also, corrected a typo on latitude
 
-function Reading_Gridding_Argo_Rev3(inDir, outDir)
+function Reading_Gridding_Argo_Rev3(flag)
 
-    res = 0.25; %desired resolution of output (.25 for GRIM)
+if flag==0
+    inDir = '/data4/OceanSalinity/RIM/ARGO'; %input folder
+    outDir = '/data4/OceanSalinity/RIM/ARGO/Data/GriddedData'; % output folder
+elseif flag==1
+    inDir = 'Z:\OceanSalinity\RIM\ARGO'; %input folder
+    outDir = 'Z:\OceanSalinity\RIM\ARGO\Data\GriddedData'; % output folder
+end
+
+    res = 0.25; %desired resolution
 
     r = round(180/res); %rows in gridding matrix
     c = round(360/res); %columns in gridding matrix
 
-    files = dir([inDir,'RG_ArgoClim_S*']); %files to process
-    name = [inDir,files.name]; %name of the file that is being processed
+    dirin = [inDir '/Data/RawData/']; % input folder
+    files = dir([dirin,'RG_ArgoClim_S*']); %files to process
+
+    name = [dirin,files.name]; %name of the file that is being processed
     disp(name)
 
     ncdisp(name)           
