@@ -1,53 +1,22 @@
-% RIM for SMAP Version 2 based on SMAP RIM v1b and AQ RIM v19
-% Developed by March at CFRSL - August 18 2021
-% Additional contact information: Maria Jacob - march.jacob@gmail.com
-% Inputs:
-% IMERG v6B Precipitation
-% ERA5 wind speed
-% SMAP JPL v5: lat, lon, time, sss and hycom
-% The codes calculates: 
-% RIM previous and inst
-% accum: rain accumulation for previous rain
-% ccumins: rain accumulation for IRR
-% accum49: rain accumulation vector
-% RIF: Rain Impulse Function, for previous rain
-% RIFins: Rain Impulse Function, for IRR
-% RIF49: Rain Impulse Function vector
-% Kz parametrization using kz_function_v2
-%
-% 09/03/2021 - test1
-% t_difWs with diff <=0 and t_dif <=0
-% 09/10/2021 - test2
-% just taking the closest difference
-% test 3 - same as AQ
-% t_difWs with diff <0 and t_dif <0
-%
-% 09/24/2021 - update - test 4
-% change code to use all available IMERG latitudes, since it was being
-% constrained to +-60, like CMORPH
-% 
-% 09/24/2021 - update - test 5
-% as like test 4, but using t_dif and t_difWS from test1
-% t_difWs with diff <=0 and t_dif <=0
-%
-% 12/09/2021 - update
-% as like test 5, but using Argo instead of HYCOM
-%
-% 12/15/2021 - update
-% as previous update, but using argo(aa,bb) instead of footprint average
-%
-% 01/28/2022 - update - test 6
-% as test5 but commenting likes 323-330 to not skip data
-%
-% 06/22/2022 - test 10 (between 6 and 9 we were testing 10 km res)
-% as test 6, but with RR = 2*IMERG
-%
-% 07/01/2022 - update - test 11
-% as test 6, but with RR = 1/2*IMERG
-%
-% 07/15/2022 - update - test 12
-% as test 6, but with hycom, instead of argo
-
+%-------------------------------------------------------------------------%
+% This script was developed by Maria Jacob, Kyla Drushka, Bill Asher,     %
+% Linwood Jones, Andrea Santos-Garcia                                     %
+% Additional contact information: march.jacob@gmail.com &                 %
+% kdrushka@apl.uw.edu                                                     %
+%-------------------------------------------------------------------------%
+% PRIM for SMAP                                                           %
+% Inputs:                                                                 %
+% IMERG v6B Precipitation                                                 %
+% ERA5 wind speed                                                         %
+% SMAP JPL v5: lat, lon, time, sss and                                    %
+% RG Argo Salinity                                                        %
+% It calculates:                                                          %
+% PRIM_S0m: PRIM salinity estimate at 0m depth                            %
+% PRIM_S1m: PRIM salinity estimate at 1m depth                            %
+% PRIM_S5m: PRIM salinity estimate at 5m depth                            %
+% Kz: vertical diffusivity coefficient                                    %
+% PSS: Probability of salinity stratification between 0 and 10 m          %
+%-------------------------------------------------------------------------%
 
 function Run_PRIM_SMAP_JPLv5_IMERGv6_Rev12_h5
 
