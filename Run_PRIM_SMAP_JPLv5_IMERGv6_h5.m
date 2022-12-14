@@ -41,14 +41,22 @@ function PRIM_SMAP_setting(yyyy,mm,dd,flag)
         addpath('Z:/OceanSalinity/RIM/kz_fromAPLUW'); 
     end
  
-    pathSMAP = [diskname 'OceanSalinity/RIM/SMAP/Data/GriddedData/JPL/v5']; %path to SMAP gridded data
+    path_smap = [diskname 'Data/path_to_gridded_smap_data']; %path to SMAP 
+    %gridded data, generated with Reading_Gridding_SMAP_JPLV5.m
+    %Note: we'll need to change this if we change the code name
 
-    path_IMERG_Mat = [diskname 'OceanSalinity/RIM/IMERG/Data/GriddedData/Daily']; %path to imerg data
+    path_imerg = [diskname 'Data/path_to_gridded_daily_imerg_data']; 
+    %path to imerg data, gridded data and concatenated daily, out of 
+    %Concatenating_subdaily_IMERG_V06B.m
+    %Note: we'll need to change this if we change the code name
 
-    path_argo = [diskname 'OceanSalinity/RIM/ARGO/Data/GriddedData']; %path to argo data
+    path_argo = [diskname 'Data/path_to_argo_gridded_data']; %path to argo 
+    %data, generated with Reading_Gridding_Argo_until2018.m if data is 
+    %previous to 2018 or Concatenating_Argo_after2018.m if data is after 2018
+    %Note: we'll need to change this if we create one Argo file
         
-    outputPath = [diskname 'OceanSalinity/RIM/SMAP/ForDelivery/SampleData']; %location of the output path
-    
+    out_path = [diskname 'Data/path_to_output']; %location of the output 
+    %path    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Reading Argo data
@@ -65,7 +73,7 @@ function PRIM_SMAP_setting(yyyy,mm,dd,flag)
         argo = salinity(:,:,argo_month);
         
         for n = 1:size(dd,2)  
-            PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_IMERG_Mat,pathSMAP,outputPath,argo,flag,test_name);
+            PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_imerg,path_smap,out_path,argo,flag,test_name);
 %             PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_IMERG_Mat,pathSMAP,outputPath,flag,test_name);
         end
     end
