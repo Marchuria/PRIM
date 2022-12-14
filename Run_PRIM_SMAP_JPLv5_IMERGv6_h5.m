@@ -21,18 +21,14 @@
 function Run_PRIM_SMAP
 
 % yyyy = integer input for the year in 4 digits 
-% mm = vector input for the months (So you can run for multiple months)
-% dd = vector input for the total of day per month (So you can run for multiple days in the month or for an specific quantity of days in the month)
-% flag = 0 means running in CFRSL server (linux), 1 local computer
-% (windows)
+% mm = vector input for the months% dd = vector input for the total of day per month
+% flag = 0 means running in linux, 1 in windows
 
-    test_name = 'test6'; % *** change this line only to set the filenames for this revision ***
+    yyyy = 2021; %year to run PRIM
+    mm = 1:12;%months to run PRIM
+    dd = 1:31; %days to run PRIM
 
-    yyyy = 2021;
-    mm = 9;%1:12;%
-    dd = 30;%1:31;
-
-    RIMv1b_SMAP_JPLv5_IMERGv6(yyyy,mm,dd,0,test_name);
+    PRIM_SMAP_setting(yyyy,mm,dd,flag); %call to function to read the paths to data
     
 end
 
