@@ -18,7 +18,7 @@
 % PSS: Probability of salinity stratification between 0 and 10 m          %
 %-------------------------------------------------------------------------%
 
-function Run_PRIM_SMAP_JPLv5_IMERGv6_Rev12_h5
+function Run_PRIM_SMAP
 
 % yyyy = integer input for the year in 4 digits 
 % mm = vector input for the months (So you can run for multiple months)
