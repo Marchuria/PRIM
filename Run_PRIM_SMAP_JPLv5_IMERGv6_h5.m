@@ -32,14 +32,13 @@ function Run_PRIM_SMAP
     
 end
 
-function RIMv1b_SMAP_JPLv5_IMERGv6(yyyy,mm,dd,flag,test_name)
+function PRIM_SMAP_setting(yyyy,mm,dd,flag)
 
     if flag==0
-        diskname = '/data4/'; %CFRSL server
-        addpath('/data4/OceanSalinity/RIM/kz_fromAPLUW');
+        diskname = '/disk/'; %main disk name in linux
     elseif flag==1
-        diskname = 'Z:\'; %local computer
-        addpath('Z:/OceanSalinity/RIM/kz_fromAPLUW');
+        diskname = 'C:\'; %windows computer disk name
+        addpath('Z:/OceanSalinity/RIM/kz_fromAPLUW'); 
     end
  
     pathSMAP = [diskname 'OceanSalinity/RIM/SMAP/Data/GriddedData/JPL/v5']; %path to SMAP gridded data
