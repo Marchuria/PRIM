@@ -61,23 +61,29 @@ function PRIM_SMAP_setting(yyyy,mm,dd,flag)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Reading Argo data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    argofile = [path_argo '/Argo_RG_Salinity_2021.mat'];
-%     argofile = [path_argo '/Argo_RG_Salinity_2015-2018.mat'];
-    load(argofile);
+    argofile = [path_argo '/Argo_RG_Salinity_2021.mat']; %for reading argo 
+    %file, created with Reading_Gridding_Argo_after2018.m.
+    %NOTE: the year has to be the same as yyyy in line XX
+%     argofile = [path_argo '/Argo_RG_Salinity_2015-2018.mat']; %for reading 
+    %argo file, created with Reading_Gridding_Argo_until2018.m
+
+    load(argofile); %loading the data file
+
     
 %% For loop design for running for multiple days and months
-    for m = 1:size(mm,2)
+    for m = 1:size(mm,2) %reading months of the year, one at a time
 
-        argo_month = time(:,2) == mm(1,m) & time(:,3) == yyyy;
+        argo_month = time(:,2) == mm(1,m) & time(:,3) == yyyy; %to select 
+        %the correct month and year from argo file
     
-        argo = salinity(:,:,argo_month);
+        argo = salinity(:,:,argo_month); %to read the argo data according 
+        %to the month and year selected before
         
         for n = 1:size(dd,2)  
-            PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_imerg,path_smap,out_path,argo,flag,test_name);
-%             PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_IMERG_Mat,pathSMAP,outputPath,flag,test_name);
+            PRIM_SMAP(yyyy,mm(1,m),dd(1,n),path_imerg,path_smap,out_path,argo,flag,test_name);
+            %call to function to run PRIM for SMAP
         end
     end
-
 end
 
 function PRIM_SMAP_JPLv5_IMERGv6B(year,month,day,path_IMERG_Mat,pathSMAP,outputPath,argo,flag,test_name)
