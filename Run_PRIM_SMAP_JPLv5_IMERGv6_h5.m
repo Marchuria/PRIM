@@ -1,111 +1,89 @@
-% RIM for SMAP Version 2 based on SMAP RIM v1b and AQ RIM v19
-% Developed by March at CFRSL - August 18 2021
-% Additional contact information: Maria Jacob - march.jacob@gmail.com
-% Inputs:
-% IMERG v6B Precipitation
-% ERA5 wind speed
-% SMAP JPL v5: lat, lon, time, sss and hycom
-% The codes calculates: 
-% RIM previous and inst
-% accum: rain accumulation for previous rain
-% ccumins: rain accumulation for IRR
-% accum49: rain accumulation vector
-% RIF: Rain Impulse Function, for previous rain
-% RIFins: Rain Impulse Function, for IRR
-% RIF49: Rain Impulse Function vector
-% Kz parametrization using kz_function_v2
-%
-% 09/03/2021 - test1
-% t_difWs with diff <=0 and t_dif <=0
-% 09/10/2021 - test2
-% just taking the closest difference
-% test 3 - same as AQ
-% t_difWs with diff <0 and t_dif <0
-%
-% 09/24/2021 - update - test 4
-% change code to use all available IMERG latitudes, since it was being
-% constrained to +-60, like CMORPH
-% 
-% 09/24/2021 - update - test 5
-% as like test 4, but using t_dif and t_difWS from test1
-% t_difWs with diff <=0 and t_dif <=0
-%
-% 12/09/2021 - update
-% as like test 5, but using Argo instead of HYCOM
-%
-% 12/15/2021 - update
-% as previous update, but using argo(aa,bb) instead of footprint average
-%
-% 01/28/2022 - update - test 6
-% as test5 but commenting likes 323-330 to not skip data
-%
-% 06/22/2022 - test 10 (between 6 and 9 we were testing 10 km res)
-% as test 6, but with RR = 2*IMERG
-%
-% 07/01/2022 - update - test 11
-% as test 6, but with RR = 1/2*IMERG
-%
-% 07/15/2022 - update - test 12
-% as test 6, but with hycom, instead of argo
+%-------------------------------------------------------------------------%
+% This script was developed by Maria Jacob, Kyla Drushka, Bill Asher,     %
+% Linwood Jones, Andrea Santos-Garcia                                     %
+% Additional contact information: march.jacob@gmail.com &                 %
+% kdrushka@apl.uw.edu                                                     %
+%-------------------------------------------------------------------------%
+% PRIM for SMAP                                                           %
+% Inputs:                                                                 %
+% IMERG v6B Precipitation                                                 %
+% ERA5 wind speed                                                         %
+% SMAP JPL v5: lat, lon, time, sss and                                    %
+% RG Argo Salinity                                                        %
+% It calculates:                                                          %
+% PRIM_S0m: PRIM salinity estimate at 0m depth                            %
+% PRIM_S1m: PRIM salinity estimate at 1m depth                            %
+% PRIM_S5m: PRIM salinity estimate at 5m depth                            %
+% Kz: vertical diffusivity coefficient                                    %
+% PSS: Probability of salinity stratification between 0 and 10 m          %
+%-------------------------------------------------------------------------%
 
-
-function Run_PRIM_SMAP_JPLv5_IMERGv6_Rev12_h5
+function Run_PRIM_SMAP
 
 % yyyy = integer input for the year in 4 digits 
-% mm = vector input for the months (So you can run for multiple months)
-% dd = vector input for the total of day per month (So you can run for multiple days in the month or for an specific quantity of days in the month)
-% flag = 0 means running in CFRSL server (linux), 1 local computer
-% (windows)
+% mm = vector input for the months% dd = vector input for the total of day per month
+% flag = 0 means running in linux, 1 in windows
 
-    test_name = 'test6'; % *** change this line only to set the filenames for this revision ***
+    yyyy = 2021; %year to run PRIM
+    mm = 1:12;%months to run PRIM
+    dd = 1:31; %days to run PRIM
 
-    yyyy = 2021;
-    mm = 9;%1:12;%
-    dd = 30;%1:31;
-
-    RIMv1b_SMAP_JPLv5_IMERGv6(yyyy,mm,dd,0,test_name);
+    PRIM_SMAP_setting(yyyy,mm,dd,flag); %call to function to read the paths to data
     
 end
 
-function RIMv1b_SMAP_JPLv5_IMERGv6(yyyy,mm,dd,flag,test_name)
+function PRIM_SMAP_setting(yyyy,mm,dd,flag)
 
     if flag==0
-        diskname = '/data4/'; %CFRSL server
-        addpath('/data4/OceanSalinity/RIM/kz_fromAPLUW');
+        diskname = '/disk/'; %main disk name in linux
     elseif flag==1
-        diskname = 'Z:\'; %local computer
-        addpath('Z:/OceanSalinity/RIM/kz_fromAPLUW');
+        diskname = 'C:\'; %windows computer disk name
+        addpath('Z:/OceanSalinity/RIM/kz_fromAPLUW'); 
     end
  
-    pathSMAP = [diskname 'OceanSalinity/RIM/SMAP/Data/GriddedData/JPL/v5']; %path to SMAP gridded data
+    path_smap = [diskname 'Data/path_to_gridded_smap_data']; %path to SMAP 
+    %gridded data, generated with Reading_Gridding_SMAP_JPLV5.m
+    %Note: we'll need to change this if we change the code name
 
-    path_IMERG_Mat = [diskname 'OceanSalinity/RIM/IMERG/Data/GriddedData/Daily']; %path to imerg data
+    path_imerg = [diskname 'Data/path_to_gridded_daily_imerg_data']; 
+    %path to imerg data, gridded data and concatenated daily, out of 
+    %Concatenating_subdaily_IMERG_V06B.m
+    %Note: we'll need to change this if we change the code name
 
-    path_argo = [diskname 'OceanSalinity/RIM/ARGO/Data/GriddedData']; %path to argo data
+    path_argo = [diskname 'Data/path_to_argo_gridded_data']; %path to argo 
+    %data, generated with Reading_Gridding_Argo_until2018.m if data is 
+    %previous to 2018 or Concatenating_Argo_after2018.m if data is after 2018
+    %Note: we'll need to change this if we create one Argo file
         
-    outputPath = [diskname 'OceanSalinity/RIM/SMAP/ForDelivery/SampleData']; %location of the output path
-    
+    out_path = [diskname 'Data/path_to_output']; %location of the output 
+    %path    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Reading Argo data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    argofile = [path_argo '/Argo_RG_Salinity_2021.mat'];
-%     argofile = [path_argo '/Argo_RG_Salinity_2015-2018.mat'];
-    load(argofile);
+    argofile = [path_argo '/Argo_RG_Salinity_2021.mat']; %for reading argo 
+    %file, created with Reading_Gridding_Argo_after2018.m.
+    %NOTE: the year has to be the same as yyyy in line XX
+%     argofile = [path_argo '/Argo_RG_Salinity_2015-2018.mat']; %for reading 
+    %argo file, created with Reading_Gridding_Argo_until2018.m
+
+    load(argofile); %loading the data file
+
     
 %% For loop design for running for multiple days and months
-    for m = 1:size(mm,2)
+    for m = 1:size(mm,2) %reading months of the year, one at a time
 
-        argo_month = time(:,2) == mm(1,m) & time(:,3) == yyyy;
+        argo_month = time(:,2) == mm(1,m) & time(:,3) == yyyy; %to select 
+        %the correct month and year from argo file
     
-        argo = salinity(:,:,argo_month);
+        argo = salinity(:,:,argo_month); %to read the argo data according 
+        %to the month and year selected before
         
         for n = 1:size(dd,2)  
-            PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_IMERG_Mat,pathSMAP,outputPath,argo,flag,test_name);
-%             PRIM_SMAP_JPLv5_IMERGv6B(yyyy,mm(1,m),dd(1,n),path_IMERG_Mat,pathSMAP,outputPath,flag,test_name);
+            PRIM_SMAP(yyyy,mm(1,m),dd(1,n),path_imerg,path_smap,out_path,argo,flag,test_name);
+            %call to function to run PRIM for SMAP
         end
     end
-
 end
 
 function PRIM_SMAP_JPLv5_IMERGv6B(year,month,day,path_IMERG_Mat,pathSMAP,outputPath,argo,flag,test_name)
